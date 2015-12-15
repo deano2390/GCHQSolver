@@ -40,11 +40,17 @@ public class Grid {
          * We use the given information to calculate the number of valid
          * permutations for each row.
          *
-         * If any row only has one valid permutation then we lock that in and
-         * propagate the new info to the rest of the grid and then recalculate
-         * the permutations. We carry on doing this iteratively until no more
-         * rows can be locked then we resort to brute forcing the remaining
-         * permutations.
+         * We then use bitwise arithmetic to determine if any cells in each row
+         * can be determined regardless of which permutation is used. These become
+         * "known" solved cells and this information is propagated to the other rows
+         * and columns. 
+         * 
+         * This process iterates, gradually narrowing down the number of valid permutations
+         * for each row and column. Eventually we narrow it down so that only one valid
+         * permutation exists for every row and therefore there is only one global permutation.
+         * 
+         * The grid is considered solved at this point and the results are printed to the console.
+         *
          */
         BigInteger totalCombinations;
 
@@ -93,40 +99,16 @@ public class Grid {
                 totalCombinations = totalCombinations.multiply(multiplier);
             }
 
-            System.out.println("row totalCombinations: " + totalCombinations.toString());
+            System.out.println("totalCombinations: " + totalCombinations.toString());
             
            
         } while (!totalCombinations.equals(BigInteger.ONE));
-
-        //Gson gson = new Gson();
-         //String json = gson.toJson(this);
-         //System.out.println(json); 
-         
+               
          printResult();
          
          System.out.println("FINISH");
     }
-
-    boolean isSolved() {
-
-        /*for (int i = 0; i < rows.length; i++) {
-         Row row = rows[i];
-         if (!row.isSolved()) {
-         return false;
-         }
-         }*/
-        for (int i = 0; i < columns.length; i++) {
-            Row col = columns[i];
-            //  col.loadPermutation();
-            if (!col.isSolved()) {
-                return false;
-            }
-        }
-
-        return true;
-
-    }
-
+   
     private void printResult() {
         for (int i = 0; i < rows.length; i++) {
 

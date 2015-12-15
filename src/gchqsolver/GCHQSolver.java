@@ -23,7 +23,7 @@ public class GCHQSolver {
     public static void main(String[] args) {
 
         try {
-            String json = readFile("//Users/deanwild/Documents/gchq.json", Charset.defaultCharset());
+            String json = readFile("input.json", Charset.defaultCharset());
                     
             Gson gson = new Gson();
             Grid grid = gson.fromJson(json, Grid.class);
