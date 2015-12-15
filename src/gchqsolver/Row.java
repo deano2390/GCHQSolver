@@ -1,4 +1,3 @@
-
 package gchqsolver;
 
 import java.util.ArrayList;
@@ -8,7 +7,7 @@ import java.util.ArrayList;
  * @author deanwild
  */
 public class Row {
-    
+
     transient ArrayList<Permutation> permutations = new ArrayList();
 
     transient boolean[] cells = new boolean[25];
@@ -24,7 +23,6 @@ public class Row {
     transient int totalCells;
 
     int permutationCount;
-
 
     class Permutation {
 
@@ -85,123 +83,117 @@ public class Row {
 
     public void calculatePermutations() {
 
-        boolean hintsAdded = false;
+        for (int i = 0; i < blacks.size(); i++) {
+            int cellLocation = blacks.get(i);
+            cells[cellLocation] = true;
+        }
 
-        do {
-            for (int i = 0; i < blacks.size(); i++) {
-                int cellLocation = blacks.get(i);
-                cells[cellLocation] = true;
-            }
+        permutations.clear();
 
-            permutations.clear();
+        int noOfBlocks = blocks.length;
+        int dividers = noOfBlocks - 1;
+        int freeSpace = cells.length - (totalCells + dividers);
+        int numberOfBits = noOfBlocks + dividers + freeSpace;
+        int largestBinaryNumber = (int) Math.pow(2, numberOfBits);
 
-            int noOfBlocks = blocks.length;
-            int dividers = noOfBlocks - 1;
-            int freeSpace = cells.length - (totalCells + dividers);
-            int numberOfBits = noOfBlocks + dividers + freeSpace;
-            int largestBinaryNumber = (int) Math.pow(2, numberOfBits);
+        for (int sample = 0; sample < largestBinaryNumber; sample++) {
+            int hasConsecutiveBits = (sample & (sample << 1));
+            if (hasConsecutiveBits == 0) {
+                if (Integer.bitCount(sample) == noOfBlocks) {
 
-            for (int sample = 0; sample < largestBinaryNumber; sample++) {
-                int hasConsecutiveBits = (sample & (sample << 1));
-                if (hasConsecutiveBits == 0) {
-                    if (Integer.bitCount(sample) == noOfBlocks) {
-
-                        // valid permutation, no consecutive blocks and the right number of blocks
-                        String binary = Integer.toBinaryString(sample);
-
-                        // make valid length
-                        while (binary.length() < numberOfBits) {
-                            binary = "0" + binary;
-                        }
-
-                        Permutation permutation = new Permutation(binary);
-
-                        boolean satisfiesHints = true;
-
-                        for (int black : blacks) {
-                            if (permutation.cells[black] != true) {
-                                satisfiesHints = false;
-                                break;
-                            }
-                        }
-                        
-                        for (int white : whites) {
-                            if (permutation.cells[white] != false) {
-                                satisfiesHints = false;
-                                break;
-                            }
-                        }
-
-                        if (satisfiesHints) {
-                            permutation.validate();
-                            permutations.add(permutation);
-                        }
-
-                    }
-                }
-            }
-
-            if (permutations.size() > 0) {
-
-                /**
-                 * Represent each permutation as a binary value and then perform
-                 * a bitwise AND on them all. If any bits remain ! at the end
-                 * then we know that no matter what permutation is used, this
-                 * bit is locked.
-                 */
-                int andResult = permutations.get(0).numbericValue;
-
-                for (Permutation permutation : permutations) {
-                    andResult = andResult & permutation.numbericValue;
-                    if (andResult == 0) {
-                        break;
-                    }
-                }
-
-                if (andResult > 0) {
-
-                    // there are some mutually consistent bits set to 1, we can lock them into the list of hints
-                    String binary = Integer.toBinaryString(andResult);
+                    // valid permutation, no consecutive blocks and the right number of blocks
+                    String binary = Integer.toBinaryString(sample);
 
                     // make valid length
-                    while (binary.length() < 25) {
+                    while (binary.length() < numberOfBits) {
                         binary = "0" + binary;
                     }
 
-                    for (int i = 0; i < binary.length(); i++) {
-                        if (binary.charAt(i) == '1') {
-                            addBlack(i);
+                    Permutation permutation = new Permutation(binary);
+
+                    boolean satisfiesHints = true;
+
+                    for (int black : blacks) {
+                        if (permutation.cells[black] != true) {
+                            satisfiesHints = false;
+                            break;
                         }
                     }
+
+                    for (int white : whites) {
+                        if (permutation.cells[white] != false) {
+                            satisfiesHints = false;
+                            break;
+                        }
+                    }
+
+                    if (satisfiesHints) {
+                        permutation.validate();
+                        permutations.add(permutation);
+                    }
+
                 }
+            }
+        }
 
-                int orResult = 0;
+        if (permutations.size() > 0) {
 
-                for (Permutation permutation : permutations) {
-                    orResult = orResult | permutation.numbericValue;
+            /**
+             * Represent each permutation as a binary value and then perform a
+             * bitwise AND on them all. If any bits remain ! at the end then we
+             * know that no matter what permutation is used, this bit is locked.
+             */
+            int andResult = permutations.get(0).numbericValue;
 
+            for (Permutation permutation : permutations) {
+                andResult = andResult & permutation.numbericValue;
+                if (andResult == 0) {
+                    break;
                 }
-                String binary = "";
+            }
 
-                binary = Integer.toBinaryString(orResult);
+            if (andResult > 0) {
+
+                // there are some mutually consistent bits set to 1, we can lock them into the list of hints
+                String binary = Integer.toBinaryString(andResult);
 
                 // make valid length
                 while (binary.length() < 25) {
                     binary = "0" + binary;
                 }
 
-                String test = binary;
-
-                // there are some mutually consistent bits set to 0, we can lock them into the list of hints
                 for (int i = 0; i < binary.length(); i++) {
-                    if (binary.charAt(i) == '0') {
-                        addWhite(i);
+                    if (binary.charAt(i) == '1') {
+                        addBlack(i);
                     }
                 }
-
             }
 
-        } while (hintsAdded);
+            int orResult = 0;
+
+            for (Permutation permutation : permutations) {
+                orResult = orResult | permutation.numbericValue;
+
+            }
+            String binary = "";
+
+            binary = Integer.toBinaryString(orResult);
+
+            // make valid length
+            while (binary.length() < 25) {
+                binary = "0" + binary;
+            }
+
+            String test = binary;
+
+            // there are some mutually consistent bits set to 0, we can lock them into the list of hints
+            for (int i = 0; i < binary.length(); i++) {
+                if (binary.charAt(i) == '0') {
+                    addWhite(i);
+                }
+            }
+
+        }
 
         permutationCount = permutations.size();
     }
@@ -216,6 +208,6 @@ public class Row {
         if (!whites.contains(white)) {
             whites.add(white);
         }
-    }  
+    }
 
 }
