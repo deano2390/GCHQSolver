@@ -5,9 +5,7 @@
  */
 package gchqsolver;
 
-import com.google.gson.Gson;
 import java.math.BigInteger;
-import java.util.ArrayList;
 
 /**
  *

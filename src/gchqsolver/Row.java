@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package gchqsolver;
 
 import java.util.ArrayList;
@@ -29,9 +25,6 @@ public class Row {
 
     int permutationCount;
 
-    void loadPermutation(Permutation permutation) {
-        this.cells = permutation.cells;
-    }
 
     class Permutation {
 
