@@ -223,64 +223,6 @@ public class Row {
         if (!whites.contains(white)) {
             whites.add(white);
         }
-    }
-
-    boolean isSolved() {
-
-        int total = 0;
-
-        for (int i = 0; i < cells.length; i++) {
-            if (cells[i]) {
-                total++;
-            }
-        }
-
-        // incorrect total cells - break early
-        if (total != totalCells) {
-            return false;
-        }
-
-        int position = 0;
-        int blocksFound = 0;
-
-        for (int block : blocks) {
-
-            int targetLength = block;
-            boolean blockStart = false;
-
-            while (true) {
-
-                if (targetLength > 0) {
-
-                    if (cells[position]) {
-                        blockStart = true;
-                        targetLength--;
-                    } else {
-                        if (blockStart) {
-                            // this block should have been longer - break early
-                            return false;
-                        }
-                    }
-
-                    position++;
-
-                } else {
-                    blocksFound++;
-                    break;
-                }
-
-                if (position > 25) {
-                    break;
-                }
-            }
-
-        }
-
-        if (blocksFound == blocks.length) {
-            return true;
-        }
-
-        return false;
-    }
+    }  
 
 }
