@@ -69,3 +69,7 @@ totalCombinations: 1
 
 
 FINISH
+
+
+This renders as a QR code containing the following URL:
+http://www.gchq.gov.uk/puzz/
