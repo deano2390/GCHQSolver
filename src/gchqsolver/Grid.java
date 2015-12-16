@@ -39,30 +39,29 @@ public class Grid {
          * permutations for each row.
          *
          * We then use bitwise arithmetic to determine if any cells in each row
-         * can be determined regardless of which permutation is used. These become
-         * "known" solved cells and this information is propagated to the other rows
-         * and columns. 
-         * 
-         * This process iterates, gradually narrowing down the number of valid permutations
-         * for each row and column. Eventually we narrow it down so that only one valid
-         * permutation exists for every row and therefore there is only one global permutation.
-         * 
-         * The grid is considered solved at this point and the results are printed to the console.
+         * can be determined regardless of which permutation is used. These
+         * become "known" solved cells and this information is propagated to the
+         * other rows and columns.
+         *
+         * This process iterates, gradually narrowing down the number of valid
+         * permutations for each row and column. Eventually we narrow it down so
+         * that only one valid permutation exists for every row and therefore
+         * there is only one global permutation.
+         *
+         * The grid is considered solved at this point and the results are
+         * printed to the console.
          *
          */
         BigInteger totalCombinations;
-
-        boolean foundRowsWith1Permutation = false;
+        BigInteger lastTotalCombinations = null;
 
         do {
-
-            foundRowsWith1Permutation = false;
 
             for (int rowIndex = 0; rowIndex < rows.length; rowIndex++) {
 
                 Row row = rows[rowIndex];
-               
-                row.calculatePermutations();              
+
+                row.calculatePermutations();
 
                 // ensure all hints are propagated to corresponding columns
                 for (int black : row.blacks) {
@@ -76,14 +75,14 @@ public class Grid {
 
             for (int colIndex = 0; colIndex < columns.length; colIndex++) {
                 Row col = columns[colIndex];
-               
-                col.calculatePermutations();               
-             
+
+                col.calculatePermutations();
+
                 // ensure all hints are propagated to corresponding rows
                 for (int black : col.blacks) {
                     rows[black].addBlack(colIndex);
                 }
-                
+
                 for (int white : col.whites) {
                     rows[white].addWhite(colIndex);
                 }
@@ -98,15 +97,34 @@ public class Grid {
             }
 
             System.out.println("totalCombinations: " + totalCombinations.toString());
-            
-           
+
+            if (lastTotalCombinations != null) {
+                if (totalCombinations.equals(lastTotalCombinations)) {
+                    /**
+                     * we've not reduced the total number of combinations in this iterations
+                     * we must be stuck so break early
+                     */                
+                    break;
+                    
+                }
+            }
+
+            lastTotalCombinations = totalCombinations;
+
         } while (!totalCombinations.equals(BigInteger.ONE));
-               
-         printResult();
-         
-         System.out.println("FINISH");
+
+        
+        if(totalCombinations.equals(BigInteger.ONE)){
+            printResult();
+            System.out.println("SOLVED");
+        }else{
+            System.out.println("COULD NOT SOLVE");
+        }
+        
+
+        
     }
-   
+
     private void printResult() {
         for (int i = 0; i < rows.length; i++) {
 
