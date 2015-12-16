@@ -119,6 +119,12 @@ public class Grid {
             System.out.println("SOLVED");
         }else{
             System.out.println("COULD NOT SOLVE");
+            
+            /**
+             * TODO
+             * 
+             * Brute force the remaining combinations until all rules are met to find the solution
+             */
         }
         
 
