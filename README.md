@@ -1,2 +1,2 @@
 # GCHQSolver
-An series of solutions to GCHQ's series of christmas puzzle for 2015.
+A series of solutions to GCHQ's christmas puzzles for 2015.
